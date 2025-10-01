@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Echo Zone</title>
+    <link rel="stylesheet" href="CSS/fontawesome-free-6.4.0-web/css/all.css">
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0a0a12;
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 10% 20%, rgba(28, 58, 82, 0.1) 0%, transparent 20%),
+            radial-gradient(circle at 90% 80%, rgba(28, 58, 82, 0.1) 0%, transparent 20%);
+        }
+
+
+        /* 导航栏样式保持不变 */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(10, 10, 18, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(100, 150, 200, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .page {
+            min-height: 80vh;
+            padding: 6rem 2rem 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        h1, h2, h3 {
+            color: #8ab4f8;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background-color: #8ab4f8;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: #c0c0c0;
+        }
+
+
+        p {
+            margin-bottom: 1.5rem;
+            max-width: 800px;
+            color: #b0b0b0;
+        }
+
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: transparent;
+            color: #8ab4f8;
+            border: 1px solid #8ab4f8;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background-color: rgba(138, 180, 248, 0.1);
+            box-shadow: 0 0 10px rgba(138, 180, 248, 0.3);
+        }
+
+
+        #home {
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 80vh;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        #particle-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background-color: #0a0a12;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+            animation: videoNoise 8s infinite alternate;
+        }
+
+        @keyframes videoNoise {
+            0% {
+                filter: contrast(1) brightness(0.9) saturate(1);
+            }
+            50% {
+                filter: contrast(1.1) brightness(1) saturate(1.2) hue-rotate(5deg);
+                opacity: 0.45;
+            }
+            100% {
+                filter: contrast(1) brightness(0.95) saturate(1.1);
+                opacity: 0.4;
+            }
+        }
+
+        .hero-bg video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, #8ab4f8, #c0c0c0, #8ab4f8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 25px rgba(138, 180, 248, 0.4);
+            background-size: 200% auto;
+
+            animation: gradientFlow 6s infinite linear,
+            textPulse 3s infinite alternate;
+            overflow: hidden;
+            position: relative;
+        }
+
+
+        .hero h1 span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+
+        @keyframes gradientFlow {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        @keyframes textPulse {
+            0% {
+                text-shadow: 0 0 20px rgba(138, 180, 248, 0.3),
+                0 0 40px rgba(138, 180, 248, 0.1);
+            }
+            100% {
+                text-shadow: 0 0 30px rgba(138, 180, 248, 0.6),
+                0 0 60px rgba(138, 180, 248, 0.3);
+            }
+        }
+
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+
+            animation: subTitleFade 1.5s ease 1.2s forwards;
+            position: relative;
+        }
+
+        .hero p::before,
+        .hero p::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40px;
+            height: 1px;
+            background-color: rgba(138, 180, 248, 0.5);
+        }
+
+        .hero p::before {
+            left: -50px;
+        }
+
+        .hero p::after {
+            right: -50px;
+        }
+
+        @keyframes subTitleFade {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                /* 浮动效果 */
+                animation: subTitleFloat 4s ease infinite alternate;
+            }
+        }
+
+        @keyframes subTitleFloat {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-10px);
+            }
+        }
+
+
+        .hero .btn {
+            opacity: 0;
+            transform: translateY(20px);
+
+            animation: btnFade 1.5s ease 2s forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes btnFade {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%;
+            height: 120%;
+            border: 1px solid rgba(138, 180, 248, 0.5);
+            border-radius: 4px;
+            transform: translate(-50%, -50%) scale(0.9);
+            opacity: 0;
+            animation: btnPulse 2s ease infinite;
+        }
+
+        @keyframes btnPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* 移动端适配：调整标题大小 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+                padding: 0 1rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+                padding: 0 1rem;
+            }
+
+            .hero p::before,
+            .hero p::after {
+                width: 20px;
+            }
+
+            .hero p::before {
+                left: -25px;
+            }
+
+            .hero p::after {
+                right: -25px;
+            }
+        }
+
+        .content-block {
+            margin-bottom: 4rem;
+            padding: 2rem;
+            background-color: rgba(20, 25, 40, 0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(100, 150, 200, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+
+        .featured-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .video-overlay h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .video-overlay p {
+            max-width: 600px;
+            font-size: 1.1rem;
+        }
+
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background-color: #8ab4f8;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -1px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: #0a0a12;
+            border: 2px solid #8ab4f8;
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .timeline-item:nth-child(odd)::after {
+            right: -8px;
+        }
+
+        .timeline-item:nth-child(even)::after {
+            left: -8px;
+        }
+
+        .timeline-content {
+            padding: 1.5rem;
+            background-color: rgba(30, 40, 60, 0.5);
+            border-radius: 6px;
+            border: 1px solid rgba(100, 150, 200, 0.2);
+        }
+
+        .timeline-year {
+            font-weight: bold;
+            color: #8ab4f8;
+            margin-bottom: 0.5rem;
+        }
+
+
+        .warning {
+            padding: 1.5rem;
+            background-color: rgba(60, 30, 30, 0.3);
+            border-left: 4px solid #d44;
+            border-radius: 4px;
+            margin: 2rem 0;
+        }
+
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(100, 150, 200, 0.2);
+            margin-top: 4rem;
+            color: #808080;
+            font-size: 0.9rem;
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 3rem 0;
+            height: 400px;
+        }
+
+        .media-item {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .media-item video, .media-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .media-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 550px;
+            /*padding: 1.5rem;*/
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+        }
+
+        /* 修复media-overlay内视频/图片自适应 */
+        .media-overlay img,
+        .media-overlay video {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+    </style>
+
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav>
+    <div class="nav-container">
+        <a href="#" class="logo">Echo Zone</a>
+        <ul class="nav-links">
+            <li><a href="">Home</a></li>
+            <li><a href="./html/Character.html">Character Profile</a></li>
+            <li><a href="./html/Visual.html">Visual Records</a></li>
+            <li><a href="./html/Audio.html">Audio Capture</a></li>
+            <li><a href="./html/Results.html">Investigation Results</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Home Page -->
+<section id="home" class="page">
+
+    <div id="particle-bg"></div>
+
+    <div class="hero">
+        <h1 id="hero-title">
+            <span>E</span><span>c</span><span>h</span><span>o</span><span> </span><span>Z</span><span>o</span><span>n</span><span>e</span><span> </span><span>A</span><span>r</span><span>c</span><span>h</span><span>i</span><span>v</span><span>e</span><span>s</span>
+        </h1>
+        <p>First reported in 2005, this archive presents partial records related to acoustic residues.</p>
+        <a href="#introduction" class="btn">Begin Exploration</a>
+    </div>
+</section>
+
+<!-- About Echo Zones -->
+<section id="introduction" class="page">
+    <h1>About Echo Zones</h1>
+
+    <div class="content-block">
+        <h2>Phenomenon Overview</h2>
+        <p>
+            The Echo Zone was first reported in the mid-2000s, near an abandoned industrial district on thecity's
+            outskirts. Local workers described strange sounds at night-fragments of voices and noises
+            that did not belong to the present.
+        </p>
+
+        <p>
+            Subsequent observations suggested the phenomenon extended beyond sound. Witnesses claimed tosee faint images
+            lingering in the air, like shadows of past events repeating themselves. Theseacoustic and visual residues
+            seemed to emerge unpredictably, creating a space where memory andreality overlapped.
+        </p>
+
+        <!-- Media Grid -->
+        <div class="media-grid">
+            <div class="media-item">
+                <img src="#" alt="">
+                <div class="media-overlay">
+                    <img src="./img/banner.png" alt="">
+                </div>
+            </div>
+
+            <div class="media-item">
+                <img src="#" alt="">
+                <div class="media-overlay">
+                    <video autoplay muted loop>
+                        <source src="./img/1144752fcc7c921d2c1e6dce4be5ce38_raw.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+
+        <h3>Official Investigations</h3>
+        <p>
+            Official investigations dismissed the reports as superstition or environmental interference. Yetunofficial accounts, passed down among residents and archived by independent researchers,continue to suggest that the Echo Zone is more than a myth, Whether anomaly, hallucination, orhidden truth,the records remain unresolved.
+        </p>
+
+
+    </div>
+</section>
+
+<!-- Timeline -->
+<section id="timeline" class="page">
+    <h1>Timeline</h1>
+
+    <div class="content-block">
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2005</div>
+                    <p>First unusual reports from workers near the abandoned district: unexplained voices andechoes at
+                        night.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2010</div>
+                    <p>A maintenance incident linked to the Zone leaves one worker missing; official records
+                        remaininconclusive.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2015</div>
+                    <p>
+                        2020 - Independent archives release fragments of recovered video and audio, fueling rumors that.
+                        the Zone persists.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- About the Archive -->
+<section id="about" class="page">
+    <h1>About the Archive</h1>
+
+    <div class="content-block">
+        <div class="warning">
+            <p>
+                This website is compiled by a third party. Some information sources are unknown and their authenticity
+                has not been fully verified.
+            </p>
+        </div>
+
+        <p>
+            This site presents a curated selection of records related to the Echo Zone. The materials includevideos,
+            audio logs, and photographic fragments gathered from unofficial sources and community reports.
+        </p>
+
+        <p>
+            The authenticity of these documents cannot be fully verified. Some files appear corrupted orincomplete, and
+            interpretations remain uncertain.
+        </p>
+
+        <p>
+            This archive does not claim to reveal the whole truth. lnstead, it invites readers to examine the
+            tracesweigh the evidence, and decide for themselves what the Echo Zone might be.
+        </p>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>Echo Zone Archives</p>
+</footer>
+
+<script>
+    // Smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Page scroll animation
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observe all page sections
+    document.querySelectorAll('.page').forEach(section => {
+        observer.observe(section);
+    });
+
+    /* -------------------------- 首页动画核心JS -------------------------- */
+    // 1. 标题逐字浮现动画
+    const titleSpans = document.querySelectorAll('#hero-title span');
+    titleSpans.forEach((span, index) => {
+        // 每个字延迟0.1秒出现，营造打字效果
+        setTimeout(() => {
+            span.style.opacity = '1';
+            span.style.transform = 'translateY(0)';
+        }, 100 * index);
+    });
+
+    // 2. 粒子背景生成（模拟宇宙/信号粒子效果，轻量无依赖）
+    const createParticles = () => {
+        const particleBg = document.getElementById('particle-bg');
+        const particleCount = window.innerWidth < 768 ? 30 : 60; // 移动端减少粒子数量
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+
+            // 随机粒子样式
+            const size = Math.random() * 3 + 1; // 粒子大小1-4px
+            const x = Math.random() * 100; // 水平位置0-100%
+            const y = Math.random() * 100; // 垂直位置0-100%
+            const delay = Math.random() * 5; // 动画延迟0-5s
+            const duration = Math.random() * 20 + 10; // 移动周期10-30s
+            const opacity = Math.random() * 0.5 + 0.2; // 透明度0.2-0.7
+            const color = Math.random() > 0.5 ? '#8ab4f8' : '#c0c0c0'; // 两种主题色随机
+
+            // 粒子基础样式
+            particle.style.position = 'absolute';
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.backgroundColor = color;
+            particle.style.borderRadius = '50%';
+            particle.style.opacity = opacity;
+            particle.style.left = `${x}%`;
+            particle.style.top = `${y}%`;
+            particle.style.transform = 'translate(-50%, -50%)';
+            particle.style.zIndex = '-2';
+
+            // 粒子随机移动动画（模拟缓慢漂浮）
+            particle.style.animation = `particleMove ${duration}s linear ${delay}s infinite alternate`;
+
+            particleBg.appendChild(particle);
+        }
+    };
+
+    // 粒子移动动画关键帧
+    const particleKeyframes = `
+        @keyframes particleMove {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.2;
+            }
+            50% {
+                transform: translate(calc(-50% + ${Math.random() * 20 - 10}px), calc(-50% + ${Math.random() * 20 - 10}px)) scale(1.2);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.2;
+            }
+        }
+    `;
+
+    // 注入粒子动画关键帧到样式表
+    const styleSheet = document.createElement('style');
+    styleSheet.innerHTML = particleKeyframes;
+    document.head.appendChild(styleSheet);
+
+    // 初始化粒子背景
+    window.addEventListener('load', createParticles);
+
+    // 窗口 resize 时重新生成粒子（避免响应式问题）
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            const particleBg = document.getElementById('particle-bg');
+            particleBg.innerHTML = ''; // 清空旧粒子
+            createParticles(); // 生成新粒子
+        }, 300);
+    });
+</script>
+</body>
+</html>
