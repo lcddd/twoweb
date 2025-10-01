@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investigation Results</title>
+    <link rel="stylesheet" href="../CSS/fontawesome-free-6.4.0-web/css/all.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #8ab4f8;
+            --secondary: #c0c0c0;
+            --dark: #0a0a12;
+            --darker: #05050a;
+            --accent: #ff6b6b;
+            --known-bg: rgba(35, 134, 54, 0.1);
+            --unknown-bg: rgba(248, 81, 73, 0.1);
+        }
+
+        body {
+            background-color: var(--dark);
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image:
+                    radial-gradient(circle at 10% 20%, rgba(28, 58, 82, 0.1) 0%, transparent 20%),
+                    radial-gradient(circle at 90% 80%, rgba(28, 58, 82, 0.1) 0%, transparent 20%);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(10, 10, 18, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(100, 150, 200, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Main Content */
+        .page {
+            min-height: 100vh;
+            padding: 8rem 2rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            color: var(--secondary);
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            color: #b0b0b0;
+            line-height: 1.7;
+        }
+
+        /* Scroll Animation Elements */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Content Blocks */
+        .content-block {
+            margin-bottom: 4rem;
+            padding: 2.5rem;
+            background-color: rgba(20, 25, 40, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(100, 150, 200, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(138, 180, 248, 0.03), transparent 30%);
+            pointer-events: none;
+        }
+
+        /* Conclusion Summary */
+        .conclusion {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto 4rem;
+        }
+
+        .conclusion p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .conclusion-highlight {
+            color: var(--primary);
+            font-weight: 500;
+            border-bottom: 1px solid var(--primary);
+        }
+
+        /* Two Column Layout */
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .column {
+            padding: 2rem;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .known-column {
+            background: var(--known-bg);
+            border: 1px solid rgba(35, 134, 54, 0.3);
+        }
+
+        .unknown-column {
+            background: var(--unknown-bg);
+            border: 1px solid rgba(248, 81, 73, 0.3);
+        }
+
+        .column h2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .known-column h2 {
+            color: #2ea043;
+        }
+
+        .unknown-column h2 {
+            color: #f85149;
+        }
+
+        .column h2 i {
+            font-size: 1.5rem;
+        }
+
+        .fact-list {
+            list-style-type: none;
+        }
+
+        .fact-list li {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .fact-list li:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .known-column .fact-list li {
+            border-left-color: #2ea043;
+        }
+
+        .unknown-column .fact-list li {
+            border-left-color: #f85149;
+        }
+
+        .fact-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .fact-description {
+            color: var(--secondary);
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        /* Enhanced Mystery Section */
+        .mystery-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 3rem;
+            margin-top: 4rem;
+            background: rgba(138, 180, 248, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(138, 180, 248, 0.2);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            width: 100%;
+            min-height: 400px;
+        }
+
+        .mystery-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(138, 180, 248, 0.05), transparent);
+            animation: shimmer 6s infinite linear;
+        }
+
+        .mystery-section::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(138, 180, 248, 0.1) 0%, transparent 70%);
+            animation: rotate 20s infinite linear;
+            z-index: 0;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); opacity: 0.3; }
+            50% { opacity: 0.7; }
+            100% { transform: translateX(100%); opacity: 0.3; }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .mystery-text {
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            font-style: italic;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 100%;
+            display: block;
+            text-shadow: 0 0 10px rgba(138, 180, 248, 0.5);
+            animation: textGlow 4s infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px rgba(138, 180, 248, 0.5); }
+            100% { text-shadow: 0 0 20px rgba(138, 180, 248, 0.8), 0 0 30px rgba(138, 180, 248, 0.6); }
+        }
+
+        .question-mark {
+            font-size: 6rem;
+            color: var(--primary);
+            margin: 2rem 0;
+            animation: pulse 3s infinite ease-in-out, float 6s infinite ease-in-out, rotateMark 15s infinite linear;
+            text-align: center;
+            width: 100%;
+            display: block;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 0 20px rgba(138, 180, 248, 0.7);
+            filter: drop-shadow(0 0 10px rgba(138, 180, 248, 0.5));
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+            50% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        @keyframes rotateMark {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .mystery-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0;
+            animation: particleFloat 8s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100%) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100%) translateX(20px);
+                opacity: 0;
+            }
+        }
+
+        .echo-line {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0;
+            animation: echoPulse 4s infinite;
+            z-index: 1;
+        }
+
+        @keyframes echoPulse {
+            0% {
+                width: 0%;
+                opacity: 0;
+                left: 50%;
+            }
+            50% {
+                width: 80%;
+                opacity: 0.7;
+                left: 10%;
+            }
+            100% {
+                width: 0%;
+                opacity: 0;
+                left: 50%;
+            }
+        }
+
+        .mystery-button {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .mystery-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(138, 180, 248, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .mystery-button:hover {
+            background: rgba(138, 180, 248, 0.1);
+            box-shadow: 0 0 20px rgba(138, 180, 248, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .mystery-button:hover::before {
+            left: 100%;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid rgba(100, 150, 200, 0.2);
+            margin-top: 4rem;
+            color: #808080;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .nav-links {
+                display: none;
+            }
+
+            .page {
+                padding: 7rem 1.5rem 2rem;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .question-mark {
+                font-size: 4rem;
+            }
+
+            .mystery-text {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page {
+                padding: 6rem 1rem 1rem;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .content-block {
+                padding: 1.5rem;
+            }
+
+            .column {
+                padding: 1.5rem;
+            }
+
+            .mystery-section {
+                padding: 2rem 1rem;
+                min-height: 300px;
+            }
+
+            .mystery-text {
+                font-size: 1.1rem;
+            }
+
+            .question-mark {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav>
+    <div class="nav-container">
+        <a href="../index.html" class="logo">Echo Zone</a>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="Character.html" style="color: #8ab4f8;">Character Profile</a></li>
+            <li><a href="Visual.html">Visual Records</a></li>
+            <li><a href="Audio.html">Audio Capture</a></li>
+            <li><a href="#">Investigation Results</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Investigation Results Page -->
+<section class="page">
+    <h1 class="scroll-animate">Investigation Results</h1>
+
+    <!-- Conclusion Summary -->
+    <div class="content-block conclusion scroll-animate">
+        <h2>Conclusion Summary</h2>
+        <p>Through analysis of these visual and audio recordings, we have confirmed that <span class="conclusion-highlight">Ethan's experiences are directly related to the Echo Zone phenomenon</span>. Acoustic residues, magnetic field anomalies, and time perception distortions have repeatedly appeared across multiple independent records, forming an undeniable chain of evidence.</p>
+        <p>However, <span class="conclusion-highlight">some key materials are missing, and the archives do not present the complete truth</span>. Whether Ethan ultimately escaped the influence of the Echo Zone, and the fundamental causes behind these phenomena, remain shrouded in mystery.</p>
+    </div>
+
+    <!-- Two Column Design: Known/Unknown -->
+    <div class="content-block scroll-animate">
+        <h2>Investigation Findings</h2>
+        <div class="two-columns">
+            <!-- Known Information -->
+            <div class="column known-column scroll-animate">
+                <h2><i class="fas fa-check-circle"></i> What We Know</h2>
+                <ul class="fact-list">
+                    <li class="scroll-animate">
+                        <div class="fact-title">Ethan's Background</div>
+                        <div class="fact-description">A maintenance worker in his 40s, emotionally distant after his wife's death, with strained relationship with his daughter, living in grief and self-blame.</div>
+                    </li>
+                    <li class="scroll-animate">
+                        <div class="fact-title">Existence of Wife and Daughter</div>
+                        <div class="fact-description">The authenticity of Ethan's wife and daughter has been confirmed through multiple independent sources, including photographs, recordings, and eyewitness testimonies.</div>
+                    </li>
+                    <li class="scroll-animate">
+                        <div class="fact-title">Acoustic Residues Are Real</div>
+                        <div class="fact-description">The sound residues recorded in the Echo Zone have been independently verified by multiple research teams, ruling out equipment failure or human fabrication.</div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Unknown Information -->
+            <div class="column unknown-column scroll-animate">
+                <h2><i class="fas fa-question-circle"></i> What We Don't Know</h2>
+                <ul class="fact-list">
+                    <li class="scroll-animate">
+                        <div class="fact-title">Cause of Echo Zone Formation</div>
+                        <div class="fact-description">What physical mechanism causes these anomalous areas? Is it a natural phenomenon or the effect of some unknown technology?</div>
+                    </li>
+                    <li class="scroll-animate">
+                        <div class="fact-title">Source of Wife's Voice</div>
+                        <div class="fact-description">Is the wife's voice Ethan hears a real acoustic residue, or a hallucination produced by his psychological trauma? The evidence is contradictory.</div>
+                    </li>
+                    <li class="scroll-animate">
+                        <div class="fact-title">Ethan's Ultimate Fate</div>
+                        <div class="fact-description">Did he ultimately escape the Echo Zone's influence and reconcile with his daughter? The final recorded fragments provide conflicting clues.</div>
+                    </li>
+                    <li class="scroll-animate">
+                        <div class="fact-title">Long-term Effects of Echo Zone</div>
+                        <div class="fact-description">What permanent changes does prolonged exposure to the Echo Zone cause to human consciousness? There is a lack of long-term tracking research data.</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Mystery Section -->
+    <div class="mystery-section scroll-animate">
+        <div class="mystery-particles" id="particleContainer"></div>
+        <div class="echo-line" style="top: 20%; animation-delay: 0s;"></div>
+        <div class="echo-line" style="top: 40%; animation-delay: 1s;"></div>
+        <div class="echo-line" style="top: 60%; animation-delay: 2s;"></div>
+        <div class="echo-line" style="top: 80%; animation-delay: 3s;"></div>
+
+        <div class="question-mark">?</div>
+        <p class="mystery-text scroll-animate">"The truth is like an echo, always disappearing just when you think you've caught it."</p>
+        <p class="mystery-text scroll-animate">What secret is hidden in the missing final page of the archives?</p>
+        <p class="mystery-text scroll-animate">The investigation continues...</p>
+
+        <button class="mystery-button scroll-animate" id="revealButton">
+            <i class="fas fa-search"></i> Dig Deeper
+        </button>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>Echo Zone Archives</p>
+</footer>
+
+<script>
+    // Scroll Trigger Animations
+    function initScrollAnimations() {
+        const animatedElements = document.querySelectorAll('.scroll-animate');
+
+        // Create Intersection Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Add delay for sequential appearance
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, 300);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        // Observe all animated elements
+        animatedElements.forEach(element => {
+            observer.observe(element);
+        });
+    }
+
+    // Initialize after page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize scroll animations
+        initScrollAnimations();
+
+        // Create floating particles
+        const particleContainer = document.getElementById('particleContainer');
+        const particleCount = 15;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+
+            // Random position
+            const left = Math.random() * 100;
+            const size = Math.random() * 3 + 1;
+            const delay = Math.random() * 8;
+            const duration = Math.random() * 5 + 8;
+
+            particle.style.left = `${left}%`;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.animationDelay = `${delay}s`;
+            particle.style.animationDuration = `${duration}s`;
+
+            particleContainer.appendChild(particle);
+        }
+
+        // Button interaction effect
+        const revealButton = document.getElementById('revealButton');
+        revealButton.addEventListener('click', function() {
+            // Create click effect
+            const ripple = document.createElement('div');
+            ripple.style.position = 'absolute';
+            ripple.style.width = '0px';
+            ripple.style.height = '0px';
+            ripple.style.borderRadius = '50%';
+            ripple.style.background = 'rgba(138, 180, 248, 0.3)';
+            ripple.style.left = '50%';
+            ripple.style.top = '50%';
+            ripple.style.transform = 'translate(-50%, -50%)';
+            ripple.style.zIndex = '1';
+            ripple.style.animation = 'ripple 1s ease-out';
+
+            this.appendChild(ripple);
+
+            // Remove ripple element
+            setTimeout(() => {
+                ripple.remove();
+            }, 1000);
+
+            // Show mystery message
+            alert('Access denied. Higher level security clearance required to view complete archives.');
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+                @keyframes ripple {
+                    0% {
+                        width: 0px;
+                        height: 0px;
+                        opacity: 0.7;
+                    }
+                    100% {
+                        width: 300px;
+                        height: 300px;
+                        opacity: 0;
+                    }
+                }
+            `;
+        document.head.appendChild(style);
+    });
+</script>
+</body>
+</html>

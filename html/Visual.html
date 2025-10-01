@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Recorder</title>
+    <link rel="stylesheet" href="../CSS/fontawesome-free-6.4.0-web/css/all.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #8ab4f8;
+            --secondary: #c0c0c0;
+            --dark: #0a0a12;
+            --darker: #05050a;
+            --accent: #ff6b6b;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image:
+                    radial-gradient(circle at 10% 20%, rgba(28, 58, 82, 0.1) 0%, transparent 20%),
+                    radial-gradient(circle at 90% 80%, rgba(28, 58, 82, 0.1) 0%, transparent 20%);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(10, 10, 18, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(100, 150, 200, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: var(--primary);
+            text-decoration: none;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            transform: scaleX(0);
+            transition: transform 0.5s ease;
+        }
+
+        .logo:hover::after {
+            transform: scaleX(1);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+            position: relative;
+        }
+
+        .nav-links a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Main Content */
+        .page {
+            min-height: 100vh;
+            padding: 8rem 2rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1, h2, h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        h2 {
+            font-size: 2.2rem;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            color: var(--secondary);
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            max-width: 800px;
+            color: #b0b0b0;
+            line-height: 1.7;
+        }
+
+        /* Content Blocks */
+        .content-block {
+            margin-bottom: 4rem;
+            padding: 2.5rem;
+            background-color: rgba(20, 25, 40, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(100, 150, 200, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(138, 180, 248, 0.03), transparent 30%);
+            pointer-events: none;
+        }
+
+        /* Video Grid */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 30px;
+            margin: 4rem 0;
+        }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            animation: slideUp 0.8s ease-out;
+            animation-fill-mode: both;
+            border: 1px solid rgba(100, 150, 200, 0.15);
+            position: relative;
+            height: 495px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-card:nth-child(1) { animation-delay: 0.1s; }
+        .video-card:nth-child(2) { animation-delay: 0.2s; }
+        .video-card:nth-child(3) { animation-delay: 0.3s; }
+        .video-card:nth-child(4) { animation-delay: 0.4s; }
+        .video-card:nth-child(5) { animation-delay: 0.5s; }
+
+        .video-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(138, 180, 248, 0.05), transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .video-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(138, 180, 248, 0.4);
+        }
+
+        .video-card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .video-thumbnail {
+            position: relative;
+            height: 280px;
+            background: linear-gradient(45deg, #1a2a6c, #2575fc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .video-player {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .video-card:hover .video-player {
+            transform: scale(1.05);
+        }
+
+        .video-card:nth-child(1) .video-thumbnail {
+            background: linear-gradient(45deg, #1a2a6c, #2575fc);
+        }
+
+        .video-card:nth-child(2) .video-thumbnail {
+            background: linear-gradient(45deg, #11998e, #38ef7d);
+        }
+
+        .video-card:nth-child(3) .video-thumbnail {
+            background: linear-gradient(45deg, #fc466b, #3f5efb);
+        }
+
+        .video-card:nth-child(4) .video-thumbnail {
+            background: linear-gradient(45deg, #fdbb2d, #22c1c3);
+        }
+
+        .video-card:nth-child(5) .video-thumbnail {
+            background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045);
+        }
+
+        .video-thumbnail::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(0,0,0,0.2), transparent);
+            opacity: 0.7;
+            z-index: 1;
+        }
+
+        .video-thumbnail::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 2;
+        }
+
+        .video-card:hover .video-thumbnail::after {
+            opacity: 1;
+        }
+
+        .play-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            z-index: 3;
+            transition: all 0.4s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+
+        .play-icon::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 18px solid #2575fc;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            margin-left: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover .play-icon {
+            transform: scale(1.15);
+            background: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .video-card:hover .play-icon::after {
+            border-left-color: #1a2a6c;
+        }
+
+        .video-info {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .video-title {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .video-description {
+            font-size: 1rem;
+            opacity: 0.85;
+            margin-bottom: 15px;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            opacity: 0.7;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(138, 180, 248, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn:hover {
+            background-color: rgba(138, 180, 248, 0.1);
+            box-shadow: 0 0 20px rgba(138, 180, 248, 0.3);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid rgba(100, 150, 200, 0.2);
+            margin-top: 4rem;
+            color: #808080;
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Particle Background */
+        #particle-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: var(--darker);
+        }
+
+        /* Video Modal */
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-modal-content {
+            width: 80%;
+            max-width: 1000px;
+            position: relative;
+        }
+
+        .video-modal-content video {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1100px) {
+            .video-grid {
+                grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .page {
+                padding: 7rem 1.5rem 2rem;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .video-card {
+                height: 380px;
+            }
+
+            .video-thumbnail {
+                height: 220px;
+            }
+
+            .content-block {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .video-modal-content {
+                width: 95%;
+            }
+        }
+
+        /* Glow effect for cards */
+        .glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(138, 180, 248, 0.3);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .video-card:hover .glow {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<!-- Particle Background -->
+<div id="particle-bg"></div>
+
+<!-- Video Modal -->
+<div class="video-modal" id="videoModal">
+    <div class="video-modal-content">
+        <span class="close-modal" id="closeModal">&times;</span>
+        <video controls id="modalVideo">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</div>
+
+<!-- Navigation -->
+<nav>
+    <div class="nav-container">
+        <a href="../index.html" class="logo">Echo Zone</a>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="Character.html" style="color: #8ab4f8;">Character Profile</a></li>
+            <li><a href="#">Visual Records</a></li>
+            <li><a href="Audio.html">Audio Capture</a></li>
+            <li><a href="Results.html">Investigation Results</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Visual Recorder Page -->
+<section id="visual-recorder" class="page">
+    <h1 class="floating">VISUAL RECORDER</h1>
+
+    <div class="content-block">
+        <h2>Visual Residues</h2>
+        <p>The following videos document visual residue phenomena captured in different Echo Zones. These visual fragments recur under specific magnetic field conditions, typically associated with intense emotional events.</p>
+
+        <div class="video-grid">
+            <!-- Video Card 1 -->
+            <div class="video-card">
+                <div class="glow"></div>
+                <div class="video-thumbnail">
+                    <video class="video-player" muted loop>
+                        <source src="../img/v1.mov" type="video/mp4">
+                    </video>
+                    <div class="play-icon" data-video="../img/v1.mov"></div>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">Silent Care</h3>
+                    <p class="video-description">
+                        The daughter quietly tidies the house, restoring order to the space her father has left in grief. Her actions are small, but they speak louder than words—an attempt to keep the family’s memory alive, even when silence fills the home.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Video Card 2 -->
+            <div class="video-card">
+                <div class="glow"></div>
+                <div class="video-thumbnail">
+                    <video class="video-player" muted loop>
+                        <source src="../img/v2.mov" type="video/mp4">
+                    </video>
+                    <div class="play-icon" data-video="../img/v2.mov"></div>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">Waves and Echoes</h3>
+                    <p class="video-description">
+                        An empty shoreline stretches before the camera. The waves repeat endlessly, like echoes returning from the past. The absence of people turns the sea into a mirror of memory—vast, distant, and ungraspable.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Video Card 3 -->
+            <div class="video-card">
+                <div class="glow"></div>
+                <div class="video-thumbnail">
+                    <video class="video-player" muted loop>
+                        <source src="../img/mh.mp4" type="video/mp4">
+                    </video>
+                    <div class="play-icon" data-video="../img/mh.mp4"></div>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">The Day She Left </h3>
+                    <p class="video-description">
+                        In the dim silence of their home, Ada’s life slips away. The hand Ethan clutches falls, and his desperate cry—“Ada, please…”—echoes unanswered. In the days that follow, he wanders through deserted streets, haunted by the memory of her final moment. The vision of her departure lingers like an echo he cannot escape.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Video Card 4 -->
+            <div class="video-card">
+                <div class="glow"></div>
+                <div class="video-thumbnail">
+                    <video class="video-player" muted loop>
+                        <source src="../img/mh1.mp4">
+                    </video>
+                    <div class="play-icon" data-video="../img/mh1.mp4"></div>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">Through the Screen </h3>
+                    <p class="video-description">Ethan stumbles upon the Echo Zone. Through the lens of his phone, a faint image of his late wife appears. The world around him is empty, yet the screen preserves traces of what is gone. He stares in disbelief, caught between grief and wonder.</p>
+                </div>
+            </div>
+
+            <!-- Video Card 5 -->
+            <div class="video-card">
+                <div class="glow"></div>
+                <div class="video-thumbnail">
+                    <video class="video-player" muted loop>
+                        <source src="../img/mh2.mp4">
+                    </video>
+                    <div class="play-icon" data-video="../img/mh2.mp4"></div>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">Aftermath</h3>
+                    <p class="video-description">The camera drifts along his lifeless form. He opens his eyes, hollow, as if falling into an abyss. The bottle at his side is all he clings to—he drinks, each swallow bitter, each sip meant to numb. Yet the emptiness swells, silence roaring inside him. He drowns in echoes of his own making.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>Echo Zone Archives</p>
+</footer>
+
+<script>
+    // Smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const targetId = this.getAttribute('href');
+            if(targetId === '#') return;
+
+            const targetElement = document.querySelector(targetId);
+            if(targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Page scroll animation
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if(entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observe all page sections
+    document.querySelectorAll('.page').forEach(section => {
+        observer.observe(section);
+    });
+
+    // Video modal functionality
+    const videoModal = document.getElementById('videoModal');
+    const modalVideo = document.getElementById('modalVideo');
+    const closeModal = document.getElementById('closeModal');
+
+    document.querySelectorAll('.play-icon').forEach(icon => {
+        icon.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const videoSrc = this.getAttribute('data-video');
+            modalVideo.src = videoSrc;
+            videoModal.style.display = 'flex';
+            modalVideo.play().catch(error => {
+                console.error("Error playing video:", error);
+                alert("Error playing video. Please check the console for details.");
+            });
+        });
+    });
+
+    closeModal.addEventListener('click', function() {
+        videoModal.style.display = 'none';
+        modalVideo.pause();
+    });
+
+    videoModal.addEventListener('click', function(e) {
+        if(e.target === videoModal) {
+            videoModal.style.display = 'none';
+            modalVideo.pause();
+        }
+    });
+
+    // Particle background
+    const createParticles = () => {
+        const particleBg = document.getElementById('particle-bg');
+        const particleCount = window.innerWidth < 768 ? 40 : 80;
+
+        for(let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+
+            // Random particle properties
+            const size = Math.random() * 4 + 1;
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            const delay = Math.random() * 5;
+            const duration = Math.random() * 20 + 10;
+            const opacity = Math.random() * 0.5 + 0.2;
+            const color = Math.random() > 0.5 ? '#8ab4f8' : '#c0c0c0';
+
+            // Particle styling
+            particle.style.position = 'absolute';
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.backgroundColor = color;
+            particle.style.borderRadius = '50%';
+            particle.style.opacity = opacity;
+            particle.style.left = `${x}%`;
+            particle.style.top = `${y}%`;
+            particle.style.transform = 'translate(-50%, -50%)';
+            particle.style.zIndex = '-1';
+            particle.style.boxShadow = `0 0 ${size * 2}px ${color}`;
+
+            // Particle animation
+            particle.style.animation = `particleMove ${duration}s linear ${delay}s infinite alternate`;
+
+            particleBg.appendChild(particle);
+        }
+    };
+
+    // Particle movement keyframes
+    const particleKeyframes = `
+            @keyframes particleMove {
+                0% {
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 0.2;
+                }
+                50% {
+                    transform: translate(calc(-50% + ${Math.random() * 30 - 15}px), calc(-50% + ${Math.random() * 30 - 15}px)) scale(1.3);
+                    opacity: 0.7;
+                }
+                100% {
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 0.2;
+                }
+            }
+        `;
+
+    // Add particle animation to stylesheet
+    const styleSheet = document.createElement('style');
+    styleSheet.innerHTML = particleKeyframes;
+    document.head.appendChild(styleSheet);
+
+    // Initialize particle background
+    window.addEventListener('load', createParticles);
+
+    // Resize handling for particles
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            const particleBg = document.getElementById('particle-bg');
+            particleBg.innerHTML = '';
+            createParticles();
+        }, 300);
+    });
+</script>
+</body>
+</html>

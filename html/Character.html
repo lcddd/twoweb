@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Profiles</title>
+    <link rel="stylesheet" href="../CSS/fontawesome-free-6.4.0-web/css/all.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0a0a12;
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image:
+                    radial-gradient(circle at 10% 20%, rgba(28, 58, 82, 0.1) 0%, transparent 20%),
+                    radial-gradient(circle at 90% 80%, rgba(28, 58, 82, 0.1) 0%, transparent 20%);
+        }
+
+        /* 导航栏样式保持不变 */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(10, 10, 18, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(100, 150, 200, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+
+        .page {
+            min-height: 80vh;
+            padding: 6rem 2rem 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1, h2, h3 {
+            color: #8ab4f8;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background-color: #8ab4f8;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: #c0c0c0;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            max-width: 800px;
+            color: #b0b0b0;
+            /*height: 200px;*/
+        }
+
+        .content-block {
+            margin-bottom: 4rem;
+            padding: 2rem;
+            background-color: rgba(20, 25, 40, 0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(100, 150, 200, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 人物卡片布局 */
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .profile-card {
+            background-color: rgba(30, 40, 60, 0.5);
+            border-radius: 8px;
+            padding: 2rem;
+            border: 1px solid rgba(100, 150, 200, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardAppear 0.8s forwards;
+            animation-delay: calc(var(--delay) * 0.2s);
+        }
+
+        .profile-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            border-color: rgba(138, 180, 248, 0.5);
+        }
+
+        @keyframes cardAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-sketch {
+            width: 120px;
+            height: 145px;
+            border-radius: 50%;
+            background-color: rgba(138, 180, 248, 0.1);
+            border: 1px solid rgba(138, 180, 248, 0.3);
+            margin-right: 1.5rem;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-sketch img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+            filter: grayscale(30%) contrast(110%);
+        }
+
+        .profile-sketch::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(138, 180, 248, 0.2), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 1;
+        }
+
+        .profile-card:hover .profile-sketch {
+            transform: rotateY(180deg);
+            background-color: rgba(138, 180, 248, 0.2);
+        }
+
+        .profile-card:hover .profile-sketch::before {
+            opacity: 1;
+        }
+
+        .profile-card:hover .profile-sketch img {
+            transform: scale(1.2);
+            filter: grayscale(0%) contrast(120%);
+        }
+
+        .profile-info h3 {
+            margin-bottom: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-info h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: #8ab4f8;
+            transition: width 0.5s;
+        }
+
+        .profile-card:hover .profile-info h3::after {
+            width: 100%;
+        }
+
+        .profile-info p {
+            color: #8ab4f8;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .profile-card:hover .profile-info p {
+            opacity: 1;
+        }
+
+        .profile-description {
+            margin-bottom: 1.5rem;
+            color: #b0b0b0;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+            height: 350px;
+        }
+
+        .profile-description::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(138, 180, 248, 0.05), transparent);
+            transition: left 0.8s;
+        }
+
+        .profile-card:hover .profile-description::before {
+            left: 100%;
+        }
+
+        .evidence-links {
+            border-top: 1px solid rgba(100, 150, 200, 0.2);
+            padding-top: 1.5rem;
+        }
+
+        .evidence-links h4 {
+            color: #8ab4f8;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 400;
+        }
+
+        .link-list {
+            list-style: none;
+        }
+
+        .link-list li {
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: linkSlideIn 0.5s forwards;
+            animation-delay: calc(var(--delay) * 0.1s + 0.5s);
+        }
+
+        @keyframes linkSlideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .link-list a {
+            color: #c0c0c0;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-list a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(138, 180, 248, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .link-list a:hover::before {
+            left: 100%;
+        }
+
+        .link-list a:hover {
+            color: #8ab4f8;
+            background-color: rgba(138, 180, 248, 0.05);
+            transform: translateX(5px);
+        }
+
+        .link-list i {
+            margin-right: 0.5rem;
+            font-size: 0.8rem;
+            transition: transform 0.3s;
+        }
+
+        .link-list a:hover i {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        /* 关系图 */
+        .relationship-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 4rem 0;
+            opacity: 0;
+            animation: fadeIn 1s 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .relationship-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 2rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: nodeAppear 0.8s forwards;
+            animation-delay: calc(var(--delay) * 0.3s + 1.2s);
+        }
+
+        @keyframes nodeAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .node-avatar {
+            width: 100px;
+            height:130px;
+            border-radius: 50%;
+            background-color: rgba(138, 180, 248, 0.1);
+            border: 1px solid rgba(138, 180, 248, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            transition: all 0.5s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .node-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .node-avatar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(138, 180, 248, 0.3), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .relationship-node:hover .node-avatar {
+            transform: scale(1.1);
+            background-color: rgba(138, 180, 248, 0.2);
+            box-shadow: 0 0 15px rgba(138, 180, 248, 0.3);
+        }
+
+        .relationship-node:hover .node-avatar::before {
+            opacity: 1;
+        }
+
+        .node-name {
+            color: #8ab4f8;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .relationship-node:hover .node-name {
+            text-shadow: 0 0 10px rgba(138, 180, 248, 0.5);
+        }
+
+        .relationship-connector {
+            height: 2px;
+            background-color: rgba(138, 180, 248, 0.3);
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .relationship-connector::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(138, 180, 248, 0.7), transparent);
+            animation: connectorFlow 3s infinite;
+        }
+
+        @keyframes connectorFlow {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        .relationship-connector::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-left: 8px solid rgba(138, 180, 248, 0.5);
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            animation: connectorPulse 2s infinite;
+        }
+
+        @keyframes connectorPulse {
+            0%, 100% {
+                border-left-color: rgba(138, 180, 248, 0.5);
+            }
+            50% {
+                border-left-color: rgba(138, 180, 248, 0.9);
+            }
+        }
+
+        .disclaimer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: rgba(60, 30, 30, 0.3);
+            border-left: 4px solid #d44;
+            border-radius: 4px;
+            margin: 2rem 0;
+            color: #e0a0a0;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: disclaimerPulse 2s 1.8s forwards;
+        }
+
+        @keyframes disclaimerPulse {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .disclaimer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 100, 100, 0.1), transparent);
+            animation: disclaimerShine 3s infinite;
+        }
+
+        @keyframes disclaimerShine {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(100, 150, 200, 0.2);
+            margin-top: 4rem;
+            color: #808080;
+            font-size: 0.9rem;
+        }
+
+        /* 粒子背景 */
+        #particle-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(20px);
+                opacity: 0;
+            }
+        }
+
+        /* 故事元素 */
+        .story-intro {
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border-left: 3px solid #8ab4f8;
+            background: rgba(20, 25, 40, 0.3);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .echo-zone {
+            position: relative;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            background: rgba(30, 40, 60, 0.4);
+            border-radius: 8px;
+            border: 1px solid rgba(100, 150, 200, 0.2);
+            overflow: hidden;
+        }
+
+        .echo-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(138, 180, 248, 0.05), transparent);
+            animation: echoPulse 5s infinite;
+        }
+
+        @keyframes echoPulse {
+            0%, 100% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .quote {
+            font-style: italic;
+            color: #8ab4f8;
+            padding: 1rem;
+            border-left: 2px solid #8ab4f8;
+            margin: 1.5rem 0;
+            background: rgba(138, 180, 248, 0.05);
+            line-height: 50px;
+        }
+
+        .audio-element {
+            background: rgba(30, 40, 60, 0.5);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(138, 180, 248, 0.2);
+        }
+
+        .audio-element i {
+            color: #8ab4f8;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+<!-- 粒子背景 -->
+<div id="particle-bg"></div>
+
+<!-- Navigation Bar -->
+<nav>
+    <div class="nav-container">
+        <a href="../index.html" class="logo">Echo Zone</a>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="Character.html" style="color: #8ab4f8;">Character Profile</a></li>
+            <li><a href="Visual.html">Visual Records</a></li>
+            <li><a href="#">Audio Capture</a></li>
+            <li><a href="Results.html">Investigation Results</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Character Profiles Page -->
+<section id="profiles" class="page">
+    <h1>Character Profiles</h1>
+
+    <div class="content-block">
+        <div class="story-intro">
+            <h2>Case #EZ-2023-07</h2>
+            <p>In a near-future world affected by magnetic instability, specific zones known as "echo fields" began to appear. Within these spaces, fragments of sound and light from the past loop and repeat. This case file documents the residents of Echo Zone Site #17, a suburban home where anomalous acoustic phenomena were first reported in 2015.</p>
+
+            <div class="echo-zone">
+                <h3>Echo Zone Phenomenon</h3>
+                <p>The government has issued strict warnings: no overnight stays are allowed. During sleep, the human mind is at its most relaxed, and those who fall asleep inside risk losing the ability to distinguish memory from reality.</p>
+            </div>
+        </div>
+
+        <!-- Profiles Grid -->
+        <div class="profiles-grid">
+            <!-- Ethan Profile -->
+            <div class="profile-card" style="--delay: 1">
+                <div class="profile-header">
+                    <div class="profile-sketch">
+                        <img src="../img/f.jpg" alt="Ethan">
+                    </div>
+                    <div class="profile-info">
+                        <h3>Ethan Lin</h3>
+                        <p>Father / 40s / Maintenance Worker</p>
+                    </div>
+                </div>
+                <div class="profile-description">
+                    <div class="quote">
+                        A quiet maintenance worker who has been emotionally distant since the sudden death of his wife. He lives apart from his daughter and has buried his grief deep inside. Haunted by the fact that he never heard his wife's final words, he becomes obsessed with echo fields, convinced they might hold the closure he desperately needs.
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Wife Profile -->
+            <div class="profile-card" style="--delay: 2">
+                <div class="profile-header">
+                    <div class="profile-sketch">
+                        <img src="../img/m.jpg" alt="">
+                    </div>
+                    <div class="profile-info">
+                        <h3>Wife</h3>
+                        <p>Deceased / Voice Echo</p>
+                    </div>
+                </div>
+                <div class="profile-description">
+                    <div class="profile-description">
+                        <div class="quote">
+                            Ethan's wife who passed away suddenly. Her final words remain unknown to Ethan, creating a void in his life that he desperately tries to fill through echo fields. Her voice echoes in the magnetic fields, repeating fragmented phrases that Ethan obsessively tries to piece together.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Daughter Profile -->
+            <div class="profile-card" style="--delay: 3">
+                <div class="profile-header">
+                    <div class="profile-sketch">
+                        <img src="../img/d.jpg" alt="">
+                    </div>
+                    <div class="profile-info">
+                        <h3>Ada</h3>
+                        <p>Teenager / 20 years old</p>
+                    </div>
+                </div>
+                <div class="profile-description">
+                    <div class="quote">
+                        Ethan's teenage daughter who lives apart from him following her mother's death. She struggles with loneliness and the emotional distance of her father, who has become increasingly consumed by his obsession with echo fields. Her quiet pleas for connection go unheard as Ethan retreats further into his grief.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Relationship Diagram -->
+        <div class="relationship-diagram">
+            <div class="relationship-node" style="--delay: 1">
+                <div class="node-avatar">
+                    <img src="../img/f.jpg" alt="">
+                </div>
+                <div class="node-name">Ethan</div>
+            </div>
+            <div class="relationship-connector"></div>
+            <div class="relationship-node" style="--delay: 2">
+                <div class="node-avatar">
+                    <img src="../img/m.jpg" alt="">
+                </div>
+                <div class="node-name">Wife</div>
+            </div>
+            <div class="relationship-connector"></div>
+            <div class="relationship-node" style="--delay: 3">
+                <div class="node-avatar">
+                    <img src="../img/d.jpg" alt="">
+                </div>
+                <div class="node-name">Ada</div>
+            </div>
+        </div>
+
+        <!-- Story Resolution -->
+        <div class="content-block">
+            <h2>Case Resolution</h2>
+            <p>After months of obsession with the echo field, Ethan finally reaches a turning point. One night, he overhears his daughter expressing her loneliness and fears. The next day, he returns to the echo zone one last time, not to cling to the past, but to finally let go.</p>
+
+            <div class="quote">
+                "He steps out of the echo zone, and as he steps across the boundary, a small, quiet smile appears on his face."
+            </div>
+
+            <p>Ethan begins the slow process of reconnecting with his daughter, finally acknowledging the pain they've both been carrying and taking the first steps toward healing.</p>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            <p>Partial archive information is missing or contains discrepancies</p>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>Echo Residue Archives</p>
+</footer>
+
+<script>
+    // 粒子背景生成
+    function createParticles() {
+        const particleBg = document.getElementById('particle-bg');
+        const particleCount = 50;
+
+        for(let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+
+            // 随机位置
+            const left = Math.random() * 100;
+            const top = Math.random() * 100;
+
+            // 随机动画延迟和持续时间
+            const delay = Math.random() * 15;
+            const duration = 15 + Math.random() * 10;
+
+            particle.style.left = `${left}%`;
+            particle.style.top = `${top}%`;
+            particle.style.animationDelay = `${delay}s`;
+            particle.style.animationDuration = `${duration}s`;
+
+            particleBg.appendChild(particle);
+        }
+    }
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const targetId = this.getAttribute('href');
+            if(targetId === '#') return;
+
+            const targetElement = document.querySelector(targetId);
+            if(targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // 页面滚动动画
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if(entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // 观察所有页面部分
+    document.querySelectorAll('.page').forEach(section => {
+        observer.observe(section);
+    });
+
+    // 初始化粒子背景
+    window.addEventListener('load', createParticles);
+</script>
+</body>
+</html>
